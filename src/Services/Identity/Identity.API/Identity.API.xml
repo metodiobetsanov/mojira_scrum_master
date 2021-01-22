@@ -1,0 +1,210 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Identity.API</name>
+    </assembly>
+    <members>
+        <member name="T:Identity.API.Controllers.HomeController">
+            <summary>
+            Home Controller
+            </summary>
+        </member>
+        <member name="M:Identity.API.Controllers.HomeController.Index">
+            <summary>
+            Index Route
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Identity.API.Controllers.IdentityController">
+            <summary>
+                Authentication Controller
+            </summary>
+            <seealso cref="T:Microsoft.AspNetCore.Mvc.ControllerBase" />
+        </member>
+        <member name="F:Identity.API.Controllers.IdentityController.authService">
+            <summary>
+                The authentication service
+            </summary>
+        </member>
+        <member name="F:Identity.API.Controllers.IdentityController.logger">
+            <summary>
+                The logger
+            </summary>
+        </member>
+        <member name="M:Identity.API.Controllers.IdentityController.#ctor(Microsoft.Extensions.Logging.ILogger{Identity.API.Controllers.IdentityController},Identity.Services.Contracts.IAuthService)">
+            <summary>
+                Initializes a new instance of the <see cref="T:Identity.API.Controllers.IdentityController" /> class.
+            </summary>
+            <param name="logger">The logger.</param>
+            <param name="authService">The authentication service.</param>
+        </member>
+        <member name="M:Identity.API.Controllers.IdentityController.SignIn(Identity.Models.Authentication.SignInRequest)">
+            <summary>
+                Signs in the User.
+            </summary>
+            <param name="request">The request.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Identity.API.Controllers.IdentityController.ResetPassword(Identity.Models.Authentication.ResetPasswordRequest)">
+            <summary>
+                Resets the User's password.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Identity.API.Controllers.IdentityController.ChangePassword(Identity.Models.Authentication.ChangePasswordRequest)">
+            <summary>
+                Change the User's password.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Identity.API.Controllers.IdentityController.GetConfirmEmailToken">
+            <summary>
+                Confirms User's email(get token).
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Identity.API.Controllers.IdentityController.ConfirmEmail(Identity.Models.Authentication.TokenRequest)">
+            <summary>
+                Confirms User's email(validate token).
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Identity.API.Controllers.IdentityController.RefreshToken(Identity.Models.Authentication.TokenRequest)">
+            <summary>
+                Refreshes the User's access token.
+            </summary>
+            <param name="request">The request.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Identity.API.Controllers.IdentityController.RevokeToken(Identity.Models.Authentication.TokenRequest)">
+            <summary>
+                Revokes the User's refresh token.
+            </summary>
+            <param name="request">The request.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Identity.API.Controllers.IdentityController.GetIpAddress">
+            <summary>
+                Gets the ip address.
+            </summary>
+            <returns>The IP as string</returns>
+        </member>
+        <member name="T:Identity.API.Extensions.WebHostExtension">
+            <summary>
+                WebHostExtension
+            </summary>
+        </member>
+        <member name="M:Identity.API.Extensions.WebHostExtension.MigrateSQLContext``1(Microsoft.AspNetCore.Hosting.IWebHost,System.Action{``0,System.IServiceProvider})">
+            <summary>
+                Migrates the SQL context.
+            </summary>
+            <typeparam name="TContext">The type of the context.</typeparam>
+            <param name="host">The host.</param>
+            <param name="seeder">The seeder.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Identity.API.Extensions.WebHostExtension.InvokeSeeder``1(System.Action{``0,System.IServiceProvider},``0,System.IServiceProvider)">
+            <summary>
+                Invokes the seeder.
+            </summary>
+            <typeparam name="TContext">The type of the context.</typeparam>
+            <param name="seeder">The seeder.</param>
+            <param name="context">The context.</param>
+            <param name="services">The services.</param>
+        </member>
+        <member name="T:Identity.API.Factories.ApplicationDbContextFactory">
+            <summary>
+                Application Database Context Factory
+            </summary>
+            <seealso cref="!:Microsoft.EntityFrameworkCore.Design.IDesignTimeDbContextFactory&lt;Identity.Data.IdentityAPIContext&gt;" />
+        </member>
+        <member name="M:Identity.API.Factories.ApplicationDbContextFactory.CreateDbContext(System.String[])">
+            <summary>
+                Creates a new instance of a derived context.
+            </summary>
+            <param name="args">Arguments provided by the design-time service.</param>
+            <returns>
+                An instance of <typeparamref name="TContext" />.
+            </returns>
+        </member>
+        <member name="T:Identity.API.Program">
+            <summary>
+                Program
+            </summary>
+        </member>
+        <member name="M:Identity.API.Program.CreateHostBuilder(System.String[],Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+                Creates the host.
+            </summary>
+            <param name="args">The arguments.</param>
+            <param name="configuration">The configuration.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Identity.API.Program.GetConfiguration">
+            <summary>
+                Gets the configuration.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Identity.API.Program.CreateSerilogLogger(Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+                Creates the serilog logger.
+            </summary>
+            <param name="configuration">The configuration.</param>
+            <returns></returns>
+        </member>
+        <member name="T:Identity.API.Seed.IdentityContextSeed">
+            <summary>
+                Identity API Context Seeded
+            </summary>
+        </member>
+        <member name="F:Identity.API.Seed.IdentityContextSeed.passwordHasher">
+            <summary>
+                The password hasher
+            </summary>
+        </member>
+        <member name="M:Identity.API.Seed.IdentityContextSeed.SeedAsync(Identity.Data.IdentityAPIContext,Microsoft.Extensions.Logging.ILogger{Identity.API.Seed.IdentityContextSeed})">
+            <summary>
+                Seeds the context.
+            </summary>
+            <param name="context">The context.</param>
+        </member>
+        <member name="T:Identity.API.Startup">
+            <summary>
+                Startup
+            </summary>
+        </member>
+        <member name="F:Identity.API.Startup.AppName">
+            <summary>
+                The application name
+            </summary>
+        </member>
+        <member name="M:Identity.API.Startup.#ctor(Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+                Initializes a new instance of the <see cref="T:Identity.API.Startup" /> class.
+            </summary>
+            <param name="configuration">The configuration.</param>
+        </member>
+        <member name="P:Identity.API.Startup.Configuration">
+            <summary>
+                Gets the configuration.
+            </summary>
+            <value>
+                The configuration.
+            </value>
+        </member>
+        <member name="M:Identity.API.Startup.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+                Configures the services.
+            </summary>
+            <param name="services">The services.</param>
+        </member>
+        <member name="M:Identity.API.Startup.Configure(Microsoft.AspNetCore.Builder.IApplicationBuilder,Microsoft.Extensions.Logging.ILoggerFactory)">
+            <summary>
+                Configures the specified application.
+            </summary>
+            <param name="app">The application.</param>
+            <param name="loggerFactory"></param>
+        </member>
+    </members>
+</doc>

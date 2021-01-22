@@ -1,0 +1,136 @@
+version: '3.4'
+
+services:
+  
+  consul:
+    container_name: consul
+    hostname: consul
+    restart: always
+    ports:
+    - "8500:8500"
+    networks:
+      - mojira
+    volumes:
+    - consul:/consul/data
+   
+
+  identity-sqlserver:
+    container_name: identity-database
+    hostname: identity-database
+    restart: always
+    environment:
+      - SA_PASSWORD=${SAPASSWORD}
+      - ACCEPT_EULA=Y
+    ports:
+      - "1433:1433"
+    networks:
+      - mojira
+    volumes:
+      - identity-sqldata:/var/opt/mssql
+
+  rabbitmq:
+    container_name: rabbitmq
+    hostname: eventbus
+    restart: always
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
+    ports:
+     - "5672:5672"
+     - "15672:15672"
+    networks:
+      - mojira
+    volumes:
+     - rabbitmq_log:/var/log/rabbitmq
+     - rabbitmq_data:/var/lib/rabbitmq
+
+
+  notifications-service:
+    container_name: notifications-service
+    restart: on-failure
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80;
+      - JwtSettings__JwtPublicKey=${JWTPUBLICKEY}
+      - EventBusSettings__Connection=eventbus
+      - EventBusSettings__UserName=${RABBITMQ_DEFAULT_USER}
+      - EventBusSettings__Password=${RABBITMQ_DEFAULT_PASS}
+      - EventBusSettings__RetryCount=5
+      - ConsulSettings__Url=http://consul:8500
+      - ConsulSettings__ServiceID=notifications
+      - ConsulSettings__ServiceName=notifications-service
+      - ConsulSettings__ServiceAddress=notifications-service
+      - ConsulSettings__Port=80
+      - SmtpSettings__Server=${SMTPSETTINGS_SERVER}
+      - SmtpSettings__Port=${SMTPSETTINGS_PORT}
+      - SmtpSettings__Username=${SMTPSETTINGS_USERNAME}
+      - SmtpSettings__Password=${SMTPSETTINGS_PASSWORD}
+      - SmtpSettings__UseSsl=${SMTPSETTINGS_USESSL}
+    ports:
+      - "8090:80" 
+    networks:
+      - mojira
+    depends_on:
+      - rabbitmq
+      - consul
+
+  identity-service:
+    container_name: identity-service
+    restart: on-failure
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80;
+      - "ConnectionString=Server=identity-database;Database=MOJIRA_IDENTITY_DB;User Id=sa;Password=${SAPASSWORD};"  
+      - JwtSettings__JwtPublicKey=${JWTPUBLICKEY}
+      - JwtSettings__JwtPrivateKey=${JWTPRIVATEKEY}
+      - EventBusSettings__Connection=eventbus
+      - EventBusSettings__UserName=${RABBITMQ_DEFAULT_USER}
+      - EventBusSettings__Password=${RABBITMQ_DEFAULT_PASS}
+      - EventBusSettings__RetryCount=5
+      - ConsulSettings__Url=http://consul:8500
+      - ConsulSettings__ServiceID=identity
+      - ConsulSettings__ServiceName=identity-service
+      - ConsulSettings__ServiceAddress=identity-service
+      - ConsulSettings__Port=80
+    ports:
+      - "8010:80" 
+    networks:
+      - mojira
+    depends_on:
+      - consul
+      - identity-sqlserver
+
+  gateway:
+    container_name: gateway
+    restart: on-failure
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80;
+      - ConsulConnection=consul
+      - EventBusConnection=eventbus
+      - IDENTITY_SERVICE_HC=http://identity-service/hc
+      - NOTIFICATIONS_SERVICE_HC=http://notifications-service/hc
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+    ports:
+      - "8000:80"
+    networks:
+      - mojira
+    depends_on:
+      - consul
+
+networks:
+  mojira:
+    name: mojira-network
+    external: true
+
+volumes:
+  consul:
+    external: false
+  identity-sqldata:
+    external: false
+  rabbitmq_log:
+    external: false
+  rabbitmq_data:
+    external: false

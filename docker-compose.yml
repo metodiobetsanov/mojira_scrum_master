@@ -1,0 +1,30 @@
+version: '3.4'
+
+services:
+
+  consul:
+    image: consul:latest
+
+  identity-sqlserver:
+    image: mcr.microsoft.com/mssql/server:2017-latest 
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+
+  identity-service:
+    image: ${DOCKER_REGISTRY-}identityservice
+    build:
+      context: .
+      dockerfile: src/Services/Identity/Identity.API/Dockerfile
+
+  notifications-service:
+    image: ${DOCKER_REGISTRY-}notificationsservice
+    build:
+      context: .
+      dockerfile: src/Services/Notifications/Notifications.API/Dockerfile
+
+  gateway:
+    image: ${DOCKER_REGISTRY-}gatewayapi
+    build:
+      context: .
+      dockerfile: src/Gateway/Gateway.API/Dockerfile

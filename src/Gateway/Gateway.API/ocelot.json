@@ -1,0 +1,42 @@
+﻿{
+  "Routes": [
+    {
+      "UseServiceDiscovery": true,
+      "ServiceName": "identity-service",
+      "DownstreamPathTemplate": "/api/v1/identity/{url}",
+      "DownstreamScheme": "http",
+      "UpstreamPathTemplate": "/api/v1/identity/{url}",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "UseServiceDiscovery": true,
+      "ServiceName": "identity-service",
+      "DownstreamPathTemplate": "/api/v1/users/{url}",
+      "DownstreamScheme": "http",
+      "UpstreamPathTemplate": "/api/v1/users/{url}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      }
+    },
+    {
+      "UseServiceDiscovery": true,
+      "ServiceName": "notification-service",
+      "DownstreamPathTemplate": "/api/v1/notifications/{url}",
+      "DownstreamScheme": "http",
+      "UpstreamPathTemplate": "/api/v1/notifications/{url}",
+      "UpstreamHttpMethod": [ "POST" ],
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      }
+    }
+  ],
+  "GlobalConfiguration": {
+    "ServiceDiscoveryProvider": {
+      "Scheme": "http",
+      "Host": "consul",
+      "Port": 8500,
+      "Type": "Consul"
+    }
+  }
+}
